@@ -1,0 +1,7 @@
+    #messages li:nth-child(odd) {
+        background: #eee;
+    }
+    
+    .row {
+        margin: 10px;
+    }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- 导入bootstrap、jQuery、summernote相关库 -->
+    <link rel="stylesheet" href="index.css">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+    
+</head>
+
+<body>
+
+    <!-- 聊天室组件 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" id="chatroom">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="panel-title text-center">ChatRoom</div>
+                    </div>
+                    <div class="panel-body" style="max-height: 300px;overflow: auto">
+                        <ul id="messages" class="list-unstyled"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发送消息组件-->
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container" style="border: 1px lightgrey solid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="summernote"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-info btn-block btn-lg" id="send">Send</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 启用summernote -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var summernote = $('#summernote');
+        summernote.summernote({
+            height:100,
+            focus:true
+        });
+        var socket = io();
+        $('#send').on('click',function(){
+            if(summernote.summernote('isEmpty')){
+                alert('内容为空，无法发送！');
+                return;
+            }
+            socket.emit('chat message',summernote.summernote('code'));
+            // 将编辑器置空
+            summernote.summernote('code','');
+        })
+        socket.on('chat message',function(msg){
+            $('#messages').append($('<li>').text(msg))
+        })
+    </script>
+
+</body>
+
+</html>
